@@ -31,6 +31,8 @@ Suggested milestones for incremental development:
  - Fix main() to use the extracted_names list
 """
 
+__author__ = "Benjamin Feder"
+
 import sys
 import re
 import argparse
@@ -44,8 +46,20 @@ def extract_names(filename):
     ['2006', 'Aaliyah 91', 'Aaron 57', 'Abagail 895', ...]
     """
     names = []
-    # +++your code here+++
-    return names
+    year_pattern = r"\d{4}"
+    year = re.findall(year_pattern, filename)
+    names.append(year)
+    with open(filename, 'r') as f:
+        x = f.read()
+        for line in x:
+            if re.findall(r"<td>\w+</td>", line) in line:
+                name1, name2 = re.findall(
+                    r"<td>\w+</td><td>\w+</td>", x).strip("<td>").strip("</td>")
+                rank = re.findall(
+                    r"<td>\d+</td>", x).strip("<td>").strip("</td>")
+            names.append(name1 + " " + rank)
+            names.append(name2 + " " + rank)
+    return names.sort()
 
 
 def create_parser():
@@ -81,8 +95,14 @@ def main(args):
     # Format the resulting list as a vertical list (separated by newline \n).
     # Use the create_summary flag to decide whether to print the list
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
-
-    # +++your code here+++
+    list_names = extract_names(filename)
+    file_year = re.findall(r"\d{4}", filename)
+    if create_summary:
+        for name in list_names:
+            print(name, end="\n")
+    elif not create_summary:
+        with open(("baby" + file_year + ".html.summary"), 'w') as f:
+            f.write(list_names)
 
 
 if __name__ == '__main__':
