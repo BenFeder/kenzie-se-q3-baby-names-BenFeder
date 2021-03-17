@@ -48,18 +48,22 @@ def extract_names(filename):
     names = []
     year_pattern = r"\d{4}"
     year = re.findall(year_pattern, filename)
-    names.append(year)
+    year_cat = year[0]
+    names.append(year_cat)
     with open(filename, 'r') as f:
-        x = f.read()
-        for line in x:
-            if re.findall(r"<td>\w+</td>", line) in line:
-                name1, name2 = re.findall(
-                    r"<td>\w+</td><td>\w+</td>", x).strip("<td>").strip("</td>")
-                rank = re.findall(
-                    r"<td>\d+</td>", x).strip("<td>").strip("</td>")
-            names.append(name1 + " " + rank)
-            names.append(name2 + " " + rank)
-    return names.sort()
+        for line in f:
+            name_rank = re.findall(r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>',
+                                   line)
+
+            if name_rank:
+                rank = name_rank[0][0]
+                name_male = name_rank[0][1]
+                name_female = name_rank[0][2]
+
+                names.append(name_male + " " + rank)
+                names.append(name_female + " " + rank)
+        names.sort()
+    return names
 
 
 def create_parser():
@@ -97,6 +101,7 @@ def main(args):
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
     list_names = extract_names(filename)
     file_year = re.findall(r"\d{4}", filename)
+
     if create_summary:
         for name in list_names:
             print(name, end="\n")
