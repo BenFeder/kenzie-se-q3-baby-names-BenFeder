@@ -106,12 +106,12 @@ def main(args):
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
     for filename in file_list:
         names = extract_names(filename)
-        if create_summary:
-            for name in names:
-                print(name, end="\n")
+        names_sum = '\n'.join(names)
+        if not create_summary:
+            print(names_sum)
         else:
             file_year = re.findall(r"\d{4}", filename)
-            with open(("baby" + file_year + ".html.summary"), 'w') as f:
+            with open(("baby" + file_year[0] + ".html.summary"), 'w') as f:
                 f.write(names)
 
 
