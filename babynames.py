@@ -112,7 +112,7 @@ def main(args):
         else:
             file_year = re.findall(r"\d{4}", filename)
             with open(("baby" + file_year[0] + ".html.summary"), 'w') as f:
-                f.write(names)
+                f.write(names_sum)
 
 
 if __name__ == '__main__':
