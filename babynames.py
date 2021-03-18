@@ -46,6 +46,7 @@ def extract_names(filename):
     ['2006', 'Aaliyah 91', 'Aaron 57', 'Abagail 895', ...]
     """
     names = []
+    names_dict = dict()
     year_pattern = r"\d{4}"
     year = re.findall(year_pattern, filename)
     year_cat = year[0]
@@ -54,14 +55,18 @@ def extract_names(filename):
         for line in f:
             name_rank = re.findall(r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>',
                                    line)
-
             if name_rank:
                 rank = name_rank[0][0]
                 name_male = name_rank[0][1]
                 name_female = name_rank[0][2]
 
-                names.append(name_male + " " + rank)
-                names.append(name_female + " " + rank)
+                if name_male not in names_dict:
+                    names.append(name_male + " " + rank)
+                    names_dict[name_male] = rank
+
+                if name_female not in names_dict:
+                    names.append(name_female + " " + rank)
+                    names_dict[name_female] = rank
         names.sort()
     return names
 
@@ -99,15 +104,15 @@ def main(args):
     # Format the resulting list as a vertical list (separated by newline \n).
     # Use the create_summary flag to decide whether to print the list
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
-    list_names = extract_names(filename)
-    file_year = re.findall(r"\d{4}", filename)
-
-    if create_summary:
-        for name in list_names:
-            print(name, end="\n")
-    elif not create_summary:
-        with open(("baby" + file_year + ".html.summary"), 'w') as f:
-            f.write(list_names)
+    for filename in file_list:
+        names = extract_names(filename)
+        if create_summary:
+            for name in names:
+                print(name, end="\n")
+        else:
+            file_year = re.findall(r"\d{4}", filename)
+            with open(("baby" + file_year + ".html.summary"), 'w') as f:
+                f.write(names)
 
 
 if __name__ == '__main__':
