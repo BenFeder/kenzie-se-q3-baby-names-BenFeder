@@ -53,8 +53,8 @@ def extract_names(filename):
     names.append(year_cat)
     with open(filename, 'r') as f:
         for line in f:
-            name_rank = re.findall(r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>',
-                                   line)
+            name_rank_str = r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>'
+            name_rank = re.findall(name_rank_str, line)
             if name_rank:
                 rank = name_rank[0][0]
                 name_male = name_rank[0][1]
